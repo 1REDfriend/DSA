@@ -6,10 +6,25 @@ class Student :
         self.id = id
         self.gpa = gpa
     
-    def generate_firstname(self, id_finder) :
-        if self.id == id_finder :
-            return self
+    def prefix(self) :
+        if self.gender == "Male" :
+            return "Mr"
+        elif self.gender == "Female" :
+            return "Miss"
 
 def main():
     students = [] 
-    students[0].find_by_id()
+    for _ in range(3) :
+        students.append(Student(input(), input(), int(input()), input(), float(input())))
+
+    id_finder = input()
+    isHave = False
+    for studentObj in students :
+        if studentObj.id == id_finder :
+            isHave = True
+            print(f'{studentObj.prefix()} {studentObj.name} ({studentObj.age}) ID: {studentObj.id} GPA {studentObj.gpa:.2f}')
+
+            break
+    if not isHave :
+        print("Student not found")
+main()
