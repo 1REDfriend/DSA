@@ -19,18 +19,19 @@ class Students:
 
     def pop(self):
         if not self.head:
-            return None
+            print("Underflow: Cannot pop data from an empty list")
+            return False
         if not self.head.next:
             temp_node = self.head
             self.head = None
-            return temp_node
+            return True
         currentNode = self.head
         prevNode = None
         while currentNode.next:
             prevNode = currentNode
             currentNode = currentNode.next
         prevNode.next = None
-        return currentNode
+        return True
 
     def pop_first(self):
         if not self.head:
@@ -40,43 +41,58 @@ class Students:
         current_node.next = None
         return current_node
 
+    def get_size(self) :
+        count = 0
+        current_node = self.head
+        while current_node :
+            current_node = current_node.next
+            count += 1
+        return count
+
     def is_empty(self):
         return self.head is None
 
-    def show_detail(self):
+    def print_stack(self):
         currentNode = self.head
         result = ""
         while currentNode:
-            result += currentNode.data
+            if currentNode.data.isalpha() :
+                result += f"'{currentNode.data}'"
+            else :
+                result += currentNode.data
             if currentNode.next:
                 result += ", "
             currentNode = currentNode.next
+        print(f"{chr(91)}{result}{chr(93)}")
+
+
+    def find_stack(self, find) :
+        current = self.head
+        result = 0
+        while current.next :
+            if current.data == find :
+                result += 1
+            current = current.next
         return result
 
 
-if __name__ == "__main__":
-    groups = Students()
-    nameList = Students()
+def is_parentheses_matching(text) :
+    st = Students()
+    error = True
+    for i in text :
+        if i == "(" :
+            st.push(i)
+        elif i == ")" :
+            error = st.pop()
 
-    groupCount = int(input())
-    allStudentCount = int(input())
+    if st.is_empty() and error:
+        return True
+    return False
 
-    for _ in range(groupCount):
-        groups.push(Students())
-
-    for _ in range(allStudentCount):
-        nameList.push(input())
-
-    current_group = groups.head
-    while not nameList.is_empty():
-        if not current_group:
-            current_group = groups.head
-        current_group.data.push(nameList.pop().data)
-        current_group = current_group.next
-
-    current_group = groups.head
-    group_number = 1
-    while current_group:
-        print(f"Group {group_number}: {current_group.data.show_detail()}")
-        group_number += 1
-        current_group = current_group.next
+text = input()
+result = is_parentheses_matching(text)
+if result :
+    print(f"Parentheses in {text} are matched")
+else :
+    print(f"Parentheses in {text} are unmatched")
+print(result)

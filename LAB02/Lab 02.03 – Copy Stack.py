@@ -1,69 +1,63 @@
-class Node:
-    def __init__(self, data):
-        self.data = data
-        self.next = None
+class StackCopy :
+    def __init__(self) :
+        self.size = 0
+        self.data = list()
 
+    def push(self, input_data) :
+        try:
+            if input_data.isdigit():
+                input_data = int(input_data)
+            elif input_data.replace(".", "", 1).isdigit() :
+                input_data = float(input_data)
+        except (TypeError, ValueError, ArithmeticError, AttributeError):
+            pass
+        finally:
+            self.data.append(input_data)
+            self.size += 1
 
-class Students:
-    def __init__(self):
-        self.head = None
+    def pop(self) :
+        if self.data :
+            self.size -= 1
+            return self.data.pop(self.size)
+        else :
+            print("Underflow: Cannot pop data from an empty list")
 
-    def push(self, value=""):
-        newNode = Node(value)
-        if not self.head:
-            self.head = newNode
-        else:
-            currentNode = self.head
-            while currentNode.next:
-                currentNode = currentNode.next
-            currentNode.next = newNode
+    def is_empty(self) :
+        if not self.data :
+            return True
+        return False
 
-    def pop(self):
-        if not self.head:
+    def get_stack_top(self) :
+        if self.data :
+            x = self.data.pop(self.size - 1)
+            self.data.append(x)
+            return x
+        else :
+            print("Underflow: Cannot get stack top from an empty list")
             return None
-        if not self.head.next:
-            temp_node = self.head
-            self.head = None
-            return temp_node
-        currentNode = self.head
-        prevNode = None
-        while currentNode.next:
-            prevNode = currentNode
-            currentNode = currentNode.next
-        prevNode.next = None
-        return currentNode
-
-    def pop_first(self):
-        if not self.head:
-            return None
-        current_node = self.head
-        self.head = self.head.next
-        current_node.next = None
-        return current_node
 
     def get_size(self) :
-        count = 0
-        current_node = self.head
-        while current_node :
-            current_node = current_node.next
-            count += 1
-        return count
+        return self.size
 
-    def is_empty(self):
-        return self.head is None
+    def print_stack(self) :
+        return print(self.data)
 
-    def print_stack(self):
-        currentNode = self.head
-        result = ""
-        while currentNode:
-            if currentNode.data.isalpha() :
-                result += f"'{currentNode.data}'"
-            else :
-                result += currentNode.data
-            if currentNode.next:
-                result += ", "
-            currentNode = currentNode.next
-        print(f"{chr(91)}{result}{chr(93)}")
+def copy_stack(stack1, stack2) :
+    stack = StackCopy()
+    size_stack1 = stack1.get_size()
+    size_stack2 = stack2.get_size()
+
+    for _ in range(size_stack2) :
+        stack2.pop()
+
+    for _ in range(size_stack1) :
+        stack.push(stack1.pop())
+    size_stack = stack.get_size()
+
+    for _ in range(size_stack) :
+        temp = stack.pop()
+        stack1.push(temp)
+        stack2.push(temp)
 
 def print_status():
     """Print all stacks"""
@@ -77,28 +71,19 @@ def print_status():
     STACK4_.print_stack()
     print()
 
-def copy_stack(stack1, stack2) :
-    stack2.head = None
-    current = stack1.head
-    while current:
-        stack2.push(current.data)
-        current = current.next
+STACK1_ = StackCopy()
+STACK2_ = StackCopy()
 
-STACK1_ = Students()
-STACK2_ = Students()
+STACK3_ = StackCopy()
+STACK4_ = StackCopy()
 
-STACK3_ = Students()
-STACK4_ = Students()
-
-# เพิ่มข้อมูลใน Stack1
 for _ in range(int(input())):
     STACK1_.push(input())
 
-# เพิ่มข้อมูลใน Stack2
 for _ in range(int(input())):
     STACK2_.push(input())
 
-TEMP1_, TEMP2_, TEMP3_, TEMP4_ = id(STACK1_), id(STACK2_), id(STACK3_), id(STACK4_)
+TEMP1_, TEMP2_, TEMP3_, TEMP4_ = id(STACK1_),id(STACK2_), id(STACK3_), id(STACK4_)
 
 print("Copy Stack 2 to Stack 4")
 copy_stack(STACK2_, STACK4_)
@@ -125,5 +110,5 @@ copy_stack(STACK2_, STACK4_)
 STACK2_.push("E")
 print_status()
 
-print(TEMP1_ == id(STACK1_), TEMP2_ == id(STACK2_),
-    TEMP3_ == id(STACK3_), TEMP4_ == id(STACK4_))
+print(TEMP1_ == id(STACK1_), TEMP2_ == id(STACK2_)
+      ,TEMP3_ == id(STACK3_), TEMP4_ == id(STACK4_))

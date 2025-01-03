@@ -1,14 +1,14 @@
-class Node:
+class DateNode:
     def __init__(self, data):
         self.data = data
         self.next = None
 
-class Students:
+class Singly:
     def __init__(self):
         self.head = None
 
     def push(self, value=""):
-        newNode = Node(value)
+        newNode = DateNode(value)
         if not self.head:
             self.head = newNode
         else:
@@ -19,7 +19,8 @@ class Students:
 
     def pop(self):
         if not self.head:
-            return None
+            print("Underflow: Cannot pop data from an empty list")
+            return False
         if not self.head.next:
             temp_node = self.head
             self.head = None
@@ -40,43 +41,40 @@ class Students:
         current_node.next = None
         return current_node
 
+    def get_size(self) :
+        count = 0
+        current_node = self.head
+        while current_node :
+            current_node = current_node.next
+            count += 1
+        return count
+
     def is_empty(self):
         return self.head is None
 
-    def show_detail(self):
-        currentNode = self.head
-        result = ""
-        while currentNode:
-            result += currentNode.data
-            if currentNode.next:
-                result += ", "
-            currentNode = currentNode.next
+    def traverse(self):
+        current = self.head
+        if not current :
+            print("This is an empty list.")
+            return None
+        result = ''
+        while current :
+            result += current.data
+            if current.next :
+                result += " -> "
+            current = current.next
+        print(result)
+
+    def find_stack(self, find) :
+        current = self.head
+        result = 0
+        while current.next :
+            if current.data == find :
+                result += 1
+            current = current.next
         return result
 
-
-if __name__ == "__main__":
-    groups = Students()
-    nameList = Students()
-
-    groupCount = int(input())
-    allStudentCount = int(input())
-
-    for _ in range(groupCount):
-        groups.push(Students())
-
-    for _ in range(allStudentCount):
-        nameList.push(input())
-
-    current_group = groups.head
-    while not nameList.is_empty():
-        if not current_group:
-            current_group = groups.head
-        current_group.data.push(nameList.pop().data)
-        current_group = current_group.next
-
-    current_group = groups.head
-    group_number = 1
-    while current_group:
-        print(f"Group {group_number}: {current_group.data.show_detail()}")
-        group_number += 1
-        current_group = current_group.next
+sg = Singly()
+for _ in range(int(input())) :
+    sg.push(input())
+sg.traverse()
