@@ -68,17 +68,26 @@ class BST :
         print()
         print("Postorder: " , end='')
         self.postorder(self.root)
+        print()
 
-    def findMin(self) :
-        pass
+    def find_min(self) :
+        current = self.root
+        while current.left :
+            current = current.left
+        return current.data
 
-    def findMax(self) :
-        pass
+    def find_max(self) :
+        current = self.root
+        while current.right :
+            current = current.right
+        return current.data
 
 def main():
     my_bst = BST()
     for i in range(int(input())):
         my_bst.insert(int(input()))
     my_bst.traverse()
+    print("Max:", my_bst.find_max())
+    print("Min:", my_bst.find_min())
 
 main()
