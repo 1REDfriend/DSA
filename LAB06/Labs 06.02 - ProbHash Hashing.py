@@ -1,3 +1,5 @@
+import json
+
 class Student :
     std_id = int
     name = str
@@ -53,8 +55,8 @@ class ProbHash :
 
     def insert_data(self, std: Student) :
         if len(list(filter(lambda x : x is not None, self.hash_table))) >= self.size :
-            return print(f"The list is full. {std.get_std_id()} cloud not be inserted.")
-        
+            return print(f"The list is full. {std.get_std_id()} could not be inserted.")
+
         index = std.get_std_id() % self.size
         count = 0
         while self.hash_table[(index + count) % self.size] is not None:
@@ -63,32 +65,55 @@ class ProbHash :
         self.hash_table[(index + count) % self.size] = std
         print(f"Insert {std.get_std_id()} at index {(index + count) % self.size}")
     
-    def search_data(self, std_id: int) :
+    def search_data(self, std_id: int) -> Student:
         for i,student in enumerate(self.hash_table):
             if student is not None and student.get_std_id() == std_id :
                 print(f"Found {std_id} at index {i}")
                 return student
-        print(f"{std_id} doese not exist.")
+        print(f"{std_id} does not exist.")
 
-def main():
-    import json
-    size = int(input())
-    hashtable = ProbHash(size)
-    while True:
-        finish = input()
-        if finish == "Done":
-            break
-        condition, data = finish.split(" = ")
-        if condition == "I":
-            std_in = json.loads(data)
-            std = Student(std_in["ID"], std_in["Name"], std_in["GPA"])
-            hashtable.insert_data(std)
-        elif condition == "S":
-            print("------")
-            student = hashtable.search_data(int(data))
-            if student is not None:
-                student.print_details()
-            print("------")
-        else:
-            print("Invalid Condition!")
+class BinarySearch :
+    data = []
+    def __init__(self,data):
+        self.insert_data(data)
+    
+    def insert_data(self, data) :
+        try:
+            parsed_data = json.loads(data)
+        except json.JSONDecodeError:
+            return
+
+        for entry in parsed_data:
+            if len(entry) >= 3:
+                std_id = entry["id"]
+                name = entry["name"]
+                gpa = entry["gpa"]
+                self.data.append(Student(std_id, name, gpa))
+
+    def find(self, name) -> (Student, int):
+        comparisons_t = 0
+        left = 0
+        right = len(self.data) - 1
+        while left <= right:
+            mid = (left + right) // 2
+            comparisons_t += 1
+            mid_student = self.data[mid]
+
+            if mid_student.get_name() == name:
+                print(f"Found {name} at index {mid}")
+                return mid_student, comparisons_t
+            elif mid_student.get_name() < name:
+                left = mid + 1
+            else:
+                right = mid - 1
+
+        print(f"{name} does not exists.")
+        return None , comparisons_t
+
+def main() :
+    bn = BinarySearch(input())
+    student, compareT = bn.find(input())
+    if student :
+        student.print_details()
+    print(f"Comparisons times: {compareT}")
 main()
