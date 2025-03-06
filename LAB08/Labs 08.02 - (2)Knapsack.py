@@ -1,39 +1,27 @@
-class Item :
-    name : str
-    price : int
-    weight : float
-
-    def __init__(self, name: str, price: int, weight: float):
+class Item:
+    def __init__(self, name, price, weight):
         self.name = name
         self.price = price
         self.weight = weight
 
-    def get_name(self) -> str :
-        return self.name
+def knapsack(amount, itemList):
+    itemList.sort(key=lambda x: x.price / x.weight, reverse=True)
 
-    def get_price(self) -> int :
-        return self.price
+    backpack_size = amount
+    total_value = 0
+    selected_items = []
 
-    def get_weight(self) -> float :
-        return self.weight
+    for item in itemList:
+        if amount >= item.weight:
+            selected_items.append(item)
+            total_value += item.price
+            amount -= item.weight
 
-def knapsack(items: list[Item], k_cap: float):
-    sorted_items = sorted(items, key=lambda x: (-x.get_price(), x.get_weight()))
-
-    total_weight = 0
-    total_price = 0
-
-    print(f"Knapsack Size: {k_cap:.1f} kg")
+    print(f"Knapsack Size: {backpack_size:.1f} kg")
     print("===============================")
-
-    for item in sorted_items:
-        if total_weight + item.get_weight() <= k_cap:
-            total_weight += item.get_weight()
-            total_price += item.get_price()
-            print(f"{item.get_name()} -> {item.get_weight()} kg -> {item.get_price()} THB")
-
-    print(f"Total: {total_price} THB")
-
+    for item in selected_items:
+        print(f"{item.name} -> {item.weight} kg -> {item.price} THB")
+    print(f"Total: {total_value} THB")
 
 def main():
     import json
@@ -42,7 +30,9 @@ def main():
     while num_items != 0:
         item_in = json.loads(input())
         items.append(Item(item_in['name'], item_in['price'], item_in['weight']))
-        num_items = num_items - 1
+        num_items -= 1
     knapsack_capacity = float(input())
-    knapsack(items, knapsack_capacity)
-main()
+    knapsack(knapsack_capacity, items)
+
+if __name__ == "__main__":
+    main()
