@@ -17,6 +17,7 @@ def coinExchange(amount, coinList, duplexNum = 1):
         result[coin_value] = num_coins
         amount -= num_coins * coin_value
         canExchange = False
+
         for coin_key in coin_values :
             if coinList[coin_key] <= 0 :
                 continue
@@ -27,6 +28,7 @@ def coinExchange(amount, coinList, duplexNum = 1):
             amount += coin_value
             if result[coin_value] - duplexNum <= 0 :
                 isMaximum_duplex = True
+
     for v in coinList.values() :
         find_coin_remaining += v
     if amount > 0 and find_coin_remaining > 0 and not isMaximum_duplex:
