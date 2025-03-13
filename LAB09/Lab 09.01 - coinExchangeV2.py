@@ -4,45 +4,43 @@ def convert_key(data):
     result = {int(k): v for k, v in data.items()}
     return dict(sorted(result.items(), reverse=True))
 
-def coinExchange(amount, coinList, duplexNum = 1):
-    original_amount = amount
-    find_coin_remaining = 0
-    isMaximum_duplex = False
-    result = {x: 0 for x,_ in coinList.items()}
-    coin_values = [x for x,_ in coinList.items()]
+def coinExchange(total, denominations):
+    if total == 0:
+        output = {denom: 0 for denom in denominations.keys()}
 
-    # หาจำนวนเหรียญที่ต้องใช้ในแต่ละเหรียญ
-    for coin_value in coin_values:
-        num_coins = min(amount // coin_value, coinList[coin_value])
-        result[coin_value] = num_coins
-        amount -= num_coins * coin_value
-        canExchange = False
+    min_coins = [float('inf')] * (total + 1)
+    min_coins[0] = 0
 
-        for coin_key in coin_values :
-            if coinList[coin_key] <= 0 :
-                continue
-            if amount >= coin_key :
-                canExchange = True
-        if not canExchange and amount > 0 :
-            result[coin_value] = result[coin_value] - duplexNum
-            amount += coin_value
-            if result[coin_value] - duplexNum <= 0 :
-                isMaximum_duplex = True
+    coin_combo = [{} for _ in range(total + 1)]
+    coin_combo[0] = {denom: 0 for denom in denominations.keys()}
 
-    for v in coinList.values() :
-        find_coin_remaining += v
-    if amount > 0 and find_coin_remaining > 0 and not isMaximum_duplex:
-        coinExchange(original_amount, coinList, duplexNum + 1)
+    for curr_amount in range(1, total + 1):
+        for value, limit in denominations.items():
+            if value <= curr_amount and min_coins[curr_amount - value] != float('inf'):
+                current_usage = coin_combo[curr_amount - value].get(value, 0)
+                if current_usage < limit:
+                    new_total = min_coins[curr_amount - value] + 1
+                    if new_total < min_coins[curr_amount]:
+                        min_coins[curr_amount] = new_total
+                        coin_combo[curr_amount] = coin_combo[curr_amount - value].copy()
+                        coin_combo[curr_amount][value] = current_usage + 1
 
-    print(f"Amount: {original_amount}")
-    if amount > 0:
-        print("Coins are not enough.")
+    if min_coins[total] == float('inf'):
+        output = "Can not exchange."
+    else:
+        output = coin_combo[total]
+
+    print("Amount: {}".format(total))
+    if output == "Can not exchange.":
+        print(output)
     else:
         print("Coin exchange result:")
-        for coin_value in coin_values:
-            print(f"  {coin_value} baht = {result[coin_value]} coins")
-        total_coins = sum(result.values())
-        print(f"Number of coins: {total_coins}")
+        coin_count = 0
+        for denom in sorted(denominations.keys(), reverse=True):
+            qty = output.get(denom, 0)
+            coin_count += qty
+            print("  {} baht = {} coins".format(denom, qty))
+        print("Number of coins: {}".format(coin_count))
 
 def main():
     amount = int(input())
